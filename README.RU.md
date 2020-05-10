@@ -32,7 +32,7 @@ Numpad клавиши используются вместе с кнопкой "A
 ## Загрузка
 >Версия для Windows XP, Vista, 7, 8.1, 10.
 
-**[Загрузить](https://github.com/r57zone/Firewall-Easy/releases)**
+**[Загрузить](https://github.com/r57zone/Numpad-Plus/releases)**
 
 ## Обратная связь
 `r57zone[собака]gmail.com`
