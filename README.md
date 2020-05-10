@@ -10,6 +10,10 @@ Numpad keys are used together with the "Alt" button.
 
 To change the volume, press "Numpad +" or "Numpad -" and "Alt".
 
+
+
+Also, if necessary, you can disable hotkeys temporarily via the context menu in the notification area (tray).
+
 ## Setup
 Enter the application names and paths in thу configuration file "Config.ini". You can also specify startup parameters for applications if necessary.
 
