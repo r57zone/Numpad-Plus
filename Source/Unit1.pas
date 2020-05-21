@@ -80,9 +80,9 @@ begin
   RegisterHotKey(Main.Handle, VK_NUMPAD9, MOD_ALT, VK_NUMPAD9);
   RegisterHotKey(Main.Handle, VK_SUBTRACT, MOD_ALT, VK_SUBTRACT);
   RegisterHotKey(Main.Handle, VK_ADD, MOD_ALT, VK_ADD);
-  RegisterHotKey(Main.Handle, VK_MULTIPLY, 0, VK_MULTIPLY);
-  RegisterHotKey(Main.Handle, VK_DECIMAL, 0, VK_DECIMAL);
-  RegisterHotKey(Main.Handle, VK_DIVIDE, 0, VK_DIVIDE);
+  RegisterHotKey(Main.Handle, VK_MULTIPLY, MOD_ALT, VK_MULTIPLY);
+  RegisterHotKey(Main.Handle, VK_DECIMAL, MOD_ALT, VK_DECIMAL);
+  RegisterHotKey(Main.Handle, VK_DIVIDE, MOD_ALT, VK_DIVIDE);
 end;
 
 procedure UnRegisterKeys;
