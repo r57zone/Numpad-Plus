@@ -19,15 +19,15 @@
 
 
 
-Можно задать уровень громкости системы по умолчанию, параметр `StartupVolume`, применяться будет при запуске программы. 
+Можно задать уровень громкости системы по умолчанию, параметр `StartupVolume`, применяться будет при запуске программы. Указав `0` громкость не будет изменяться. 
 
 
 
 Для автозапуска добавьте ярлык программы `NumPadPlus.exe` в автозагрузку - Windows `%AppData%\Microsoft\Windows\Start Menu\Programs\Startup`.
 
 ## Скриншоты
-![](https://user-images.githubusercontent.com/9499881/81509124-8dc22d80-9319-11ea-86fe-6b8d30d488ef.PNG)
-![](https://user-images.githubusercontent.com/9499881/81509116-83079880-9319-11ea-94b6-6deff09a2ba2.PNG)
+![](https://github.com/user-attachments/assets/b05ec876-0d2e-403a-b329-5b5da2ec7af8)
+![](https://github.com/user-attachments/assets/c4e7e6e0-1d50-4903-ba60-639dabe79d61)
 
 ## Загрузка
 >Версия для Windows XP, Vista, 7, 8.1, 10, 11.

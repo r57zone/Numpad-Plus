@@ -21,15 +21,15 @@ Enter application names and paths in the `Config.ini` configuration file. You ca
 
 
 
-You can set the system's default volume level using the `StartupVolume` parameter, which will be applied when the program starts.
+You can set the system's default volume level using the `StartupVolume` parameter, which will be applied when the program starts. Setting `0` will prevent the volume from changing.
 
 
 
 For autostart, add a shortcut to `NumPadPlus.exe` to the Windows startup folder: `%AppData%\Microsoft\Windows\Start Menu\Programs\Startup`.
 
 ## Screenshots
-![](https://user-images.githubusercontent.com/9499881/81509130-987cc280-9319-11ea-90d1-fca3649899d6.PNG)
-![](https://user-images.githubusercontent.com/9499881/81509116-83079880-9319-11ea-94b6-6deff09a2ba2.PNG)
+![](https://github.com/user-attachments/assets/4aab229e-6536-452a-a5cf-2be1ee0b90ae)
+![](https://github.com/user-attachments/assets/d2306686-5a7b-4619-908c-ba5016e93f50)
 
 ## Download
 >Version for Windows XP, Vista, 7, 8.1, 10, 11.
