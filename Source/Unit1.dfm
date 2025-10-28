@@ -1,6 +1,8 @@
 object Main: TMain
   Left = 192
   Top = 124
+  AlphaBlend = True
+  AlphaBlendValue = 0
   BorderStyle = bsNone
   Caption = 'NumPad Plus'
   ClientHeight = 34
@@ -54,8 +56,8 @@ object Main: TMain
     Left = 104
     Top = 8
   end
-  object PopupMenu: TPopupMenu
-    Left = 8
+  object PopupMenuApp: TPopupMenu
+    Left = 32
     Top = 6
     object HotKeyOnBtn: TMenuItem
       Caption = #1042#1082#1083'. '#1075#1086#1088#1103#1095'. '#1082#1083#1072#1074'.'

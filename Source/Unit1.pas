@@ -13,7 +13,7 @@ type
     XPManifest: TXPManifest;
     NotifyLbl: TLabel;
     HideTimer: TTimer;
-    PopupMenu: TPopupMenu;
+    PopupMenuApp: TPopupMenu;
     CloseBtn: TMenuItem;
     N1: TMenuItem;
     AboutBtn: TMenuItem;
@@ -44,10 +44,10 @@ type
 
 var
   Main: TMain;
+  //HotKeyModifier: integer;
   VolumeLevel: Single;
   EndPointVolume: IAudioEndpointVolume = nil;
-  WM_TaskBarCreated: Cardinal;
-  RunOnce: boolean;
+  WM_TASKBARCREATED: Cardinal;
 
   //Translation / Перевод
   IDS_VOLUME, IDS_APP_NOT_FOUND, IDS_LAST_UPDATE: string;
@@ -62,49 +62,53 @@ var
   AppParams_0, AppParams_1, AppParams_2, AppParams_3, AppParams_4, AppParams_5, AppParams_6,
   AppParams_7, AppParams_8, AppParams_9, AppParams_10, AppParams_11, AppParams_12: string;
 
+  HotKeyVolUp, HotKeyVolDown, HotKey0, HotKey1, HotKey2, HotKey3, HotKey4,
+  HotKey5, HotKey6, HotKey7, HotKey8, HotKey9, HotKey10, HotKey11, HotKey12: integer;
+
 implementation
 
 {$R *.dfm}
 
 procedure RegisterKeys;
 begin
-  RegisterHotKey(Main.Handle, VK_NUMPAD0, MOD_ALT, VK_NUMPAD0);
-  RegisterHotKey(Main.Handle, VK_NUMPAD1, MOD_ALT, VK_NUMPAD1);
-  RegisterHotKey(Main.Handle, VK_NUMPAD2, MOD_ALT, VK_NUMPAD2);
-  RegisterHotKey(Main.Handle, VK_NUMPAD3, MOD_ALT, VK_NUMPAD3);
-  RegisterHotKey(Main.Handle, VK_NUMPAD4, MOD_ALT, VK_NUMPAD4);
-  RegisterHotKey(Main.Handle, VK_NUMPAD5, MOD_ALT, VK_NUMPAD5);
-  RegisterHotKey(Main.Handle, VK_NUMPAD6, MOD_ALT, VK_NUMPAD6);
-  RegisterHotKey(Main.Handle, VK_NUMPAD7, MOD_ALT, VK_NUMPAD7);
-  RegisterHotKey(Main.Handle, VK_NUMPAD8, MOD_ALT, VK_NUMPAD8);
-  RegisterHotKey(Main.Handle, VK_NUMPAD9, MOD_ALT, VK_NUMPAD9);
-  RegisterHotKey(Main.Handle, VK_SUBTRACT, MOD_ALT, VK_SUBTRACT);
-  RegisterHotKey(Main.Handle, VK_ADD, MOD_ALT, VK_ADD);
-  RegisterHotKey(Main.Handle, VK_MULTIPLY, MOD_ALT, VK_MULTIPLY);
-  RegisterHotKey(Main.Handle, VK_DECIMAL, MOD_ALT, VK_DECIMAL);
-  RegisterHotKey(Main.Handle, VK_DIVIDE, MOD_ALT, VK_DIVIDE);
+  RegisterHotKey(Main.Handle, HotKey0, MOD_ALT, HotKey0);
+  RegisterHotKey(Main.Handle, HotKey1, MOD_ALT, HotKey1);
+  RegisterHotKey(Main.Handle, HotKey2, MOD_ALT, HotKey2);
+  RegisterHotKey(Main.Handle, HotKey3, MOD_ALT, HotKey3);
+  RegisterHotKey(Main.Handle, HotKey4, MOD_ALT, HotKey4);
+  RegisterHotKey(Main.Handle, HotKey5, MOD_ALT, HotKey5);
+  RegisterHotKey(Main.Handle, HotKey6, MOD_ALT, HotKey6);
+  RegisterHotKey(Main.Handle, HotKey7, MOD_ALT, HotKey7);
+  RegisterHotKey(Main.Handle, HotKey8, MOD_ALT, HotKey8);
+  RegisterHotKey(Main.Handle, HotKey9, MOD_ALT, HotKey9);
+  RegisterHotKey(Main.Handle, HotkeyVolUp, MOD_ALT, HotKeyVolUp);
+  RegisterHotKey(Main.Handle, HotKeyVolDown, MOD_ALT, HotKeyVolDown);
+  RegisterHotKey(Main.Handle, HotKey10, MOD_ALT, HotKey10);
+  RegisterHotKey(Main.Handle, HotKey11, MOD_ALT, HotKey11);
+  RegisterHotKey(Main.Handle, HotKey12, MOD_ALT, HotKey12);
 end;
 
 procedure UnRegisterKeys;
 begin
-  UnRegisterHotKey(Main.Handle, VK_NUMPAD0);
-  UnRegisterHotKey(Main.Handle, VK_NUMPAD1);
-  UnRegisterHotKey(Main.Handle, VK_NUMPAD2);
-  UnRegisterHotKey(Main.Handle, VK_NUMPAD3);
-  UnRegisterHotKey(Main.Handle, VK_NUMPAD4);
-  UnRegisterHotKey(Main.Handle, VK_NUMPAD5);
-  UnRegisterHotKey(Main.Handle, VK_NUMPAD6);
-  UnRegisterHotKey(Main.Handle, VK_NUMPAD7);
-  UnRegisterHotKey(Main.Handle, VK_NUMPAD8);
-  UnRegisterHotKey(Main.Handle, VK_SUBTRACT);
-  UnRegisterHotKey(Main.Handle, VK_ADD);
-  UnRegisterHotKey(Main.Handle, VK_NUMPAD9);
-  UnRegisterHotKey(Main.Handle, VK_MULTIPLY);
-  UnRegisterHotKey(Main.Handle, VK_DECIMAL);
-  UnRegisterHotKey(Main.Handle, VK_DIVIDE);
+  UnRegisterHotKey(Main.Handle, HotKey0);
+  UnRegisterHotKey(Main.Handle, HotKey1);
+  UnRegisterHotKey(Main.Handle, HotKey2);
+  UnRegisterHotKey(Main.Handle, HotKey3);
+  UnRegisterHotKey(Main.Handle, HotKey4);
+  UnRegisterHotKey(Main.Handle, HotKey5);
+  UnRegisterHotKey(Main.Handle, HotKey6);
+  UnRegisterHotKey(Main.Handle, HotKey7);
+  UnRegisterHotKey(Main.Handle, HotKey8);
+  UnRegisterHotKey(Main.Handle, HotKeyVolUp);
+  UnRegisterHotKey(Main.Handle, HotKeyVolDown);
+  UnRegisterHotKey(Main.Handle, HotKey9);
+  UnRegisterHotKey(Main.Handle, HotKey10);
+  UnRegisterHotKey(Main.Handle, HotKey11);
+  UnRegisterHotKey(Main.Handle, HotKey12);
 end;
 
-procedure Tray(ActInd: integer);  //1 - add, 2 - remove, 3 - update
+type TTrayAction = (TrayAdd, TrayUpdate, TrayDelete);
+procedure Tray(TrayAction: TTrayAction);
 var
   NIM: TNotifyIconData;
 begin
@@ -113,14 +117,14 @@ begin
     Wnd:=Main.Handle;
     uId:=1;
     uFlags:=NIF_MESSAGE or NIF_ICON or NIF_TIP;
-    hIcon:=SendMessage(Application.Handle, WM_GETICON, ICON_SMALL2, 0);
+    hIcon:=SendMessage(Main.Handle, WM_GETICON, ICON_SMALL2, 0);
     uCallBackMessage:=WM_USER + 1;
     StrCopy(szTip, PChar(Application.Title));
   end;
-  case ActInd of
-    1: Shell_NotifyIcon(NIM_ADD, @NIM);
-    2: Shell_NotifyIcon(NIM_DELETE, @NIM);
-    3: Shell_NotifyIcon(NIM_MODIFY, @NIM);
+  case TrayAction of
+    TrayAdd: Shell_NotifyIcon(NIM_ADD, @NIM);
+    TrayUpdate: Shell_NotifyIcon(NIM_MODIFY, @NIM);
+    TrayDelete: Shell_NotifyIcon(NIM_DELETE, @NIM);
   end;
 end;
 
@@ -137,6 +141,130 @@ begin
   if GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, flag, pcLCA, 19) <= 0 then
     pcLCA[0]:=#0;
   Result:=pcLCA;
+end;
+
+function KeyNameToKeyCode(KeyName: string): Integer;
+begin
+  KeyName:=UpperCase(KeyName);
+
+  if KeyName = 'NONE' then Result := 0
+
+  else if KeyName = 'ESCAPE' then Result := VK_ESCAPE
+  else if KeyName = 'F1' then Result := VK_F1
+  else if KeyName = 'F2' then Result := VK_F2
+  else if KeyName = 'F3' then Result := VK_F3
+  else if KeyName = 'F4' then Result := VK_F4
+  else if KeyName = 'F5' then Result := VK_F5
+  else if KeyName = 'F6' then Result := VK_F6
+  else if KeyName = 'F7' then Result := VK_F7
+  else if KeyName = 'F8' then Result := VK_F8
+  else if KeyName = 'F9' then Result := VK_F9
+  else if KeyName = 'F10' then Result := VK_F10
+  else if KeyName = 'F11' then Result := VK_F11
+  else if KeyName = 'F12' then Result := VK_F12
+
+  else if KeyName = '~' then Result := 192
+  else if KeyName = '1' then Result := Ord('1')
+  else if KeyName = '2' then Result := Ord('2')
+  else if KeyName = '3' then Result := Ord('3')
+  else if KeyName = '4' then Result := Ord('4')
+  else if KeyName = '5' then Result := Ord('5')
+  else if KeyName = '6' then Result := Ord('6')
+  else if KeyName = '7' then Result := Ord('7')
+  else if KeyName = '8' then Result := Ord('8')
+  else if KeyName = '9' then Result := Ord('9')
+  else if KeyName = '0' then Result := Ord('0')
+  else if KeyName = '-' then Result := 189
+  else if KeyName = '=' then Result := 187
+  else if KeyName = '+' then Result := 187
+
+  else if KeyName = 'TAB' then Result := VK_TAB
+  else if KeyName = 'CAPS-LOCK' then Result := VK_CAPITAL
+  else if KeyName = 'SHIFT' then Result := VK_SHIFT
+  else if KeyName = 'LSHIFT' then Result := VK_LSHIFT
+  else if KeyName = 'RSHIFT' then Result := VK_RSHIFT
+  else if KeyName = 'CTRL' then Result := VK_CONTROL
+  else if KeyName = 'LCTRL' then Result := VK_LCONTROL
+  else if KeyName = 'RCTRL' then Result := VK_RCONTROL
+  else if KeyName = 'WIN' then Result := VK_LWIN
+  else if KeyName = 'ALT' then Result := VK_MENU
+  else if KeyName = 'LALT' then Result := VK_LMENU
+  else if KeyName = 'RALT' then Result := VK_RMENU
+  else if KeyName = 'SPACE' then Result := VK_SPACE
+  else if KeyName = 'ENTER' then Result := VK_RETURN
+  else if KeyName = 'BACKSPACE' then Result := VK_BACK
+
+  else if KeyName = 'Q' then Result := Ord('Q')
+  else if KeyName = 'W' then Result := Ord('W')
+  else if KeyName = 'E' then Result := Ord('E')
+  else if KeyName = 'R' then Result := Ord('R')
+  else if KeyName = 'T' then Result := Ord('T')
+  else if KeyName = 'Y' then Result := Ord('Y')
+  else if KeyName = 'U' then Result := Ord('U')
+  else if KeyName = 'I' then Result := Ord('I')
+  else if KeyName = 'O' then Result := Ord('O')
+  else if KeyName = 'P' then Result := Ord('P')
+  else if KeyName = '[' then Result := 219
+  else if KeyName = ']' then Result := 221
+  else if KeyName = 'A' then Result := Ord('A')
+  else if KeyName = 'S' then Result := Ord('S')
+  else if KeyName = 'D' then Result := Ord('D')
+  else if KeyName = 'F' then Result := Ord('F')
+  else if KeyName = 'G' then Result := Ord('G')
+  else if KeyName = 'H' then Result := Ord('H')
+  else if KeyName = 'J' then Result := Ord('J')
+  else if KeyName = 'K' then Result := Ord('K')
+  else if KeyName = 'L' then Result := Ord('L')
+  else if KeyName = ':' then Result := 186
+  else if KeyName = 'APOSTROPHE' then Result := 222
+  else if KeyName = '\' then Result := 220
+  else if KeyName = 'Z' then Result := Ord('Z')
+  else if KeyName = 'X' then Result := Ord('X')
+  else if KeyName = 'C' then Result := Ord('C')
+  else if KeyName = 'V' then Result := Ord('V')
+  else if KeyName = 'B' then Result := Ord('B')
+  else if KeyName = 'N' then Result := Ord('N')
+  else if KeyName = 'M' then Result := Ord('M')
+  else if KeyName = '<' then Result := 188
+  else if KeyName = '>' then Result := 190
+  else if KeyName = '?' then Result := 191
+
+  else if KeyName = 'PRINTSCREEN' then Result := VK_SNAPSHOT
+  else if KeyName = 'SCROLL-LOCK' then Result := VK_SCROLL
+  else if KeyName = 'PAUSE' then Result := VK_PAUSE
+  else if KeyName = 'INSERT' then Result := VK_INSERT
+  else if KeyName = 'HOME' then Result := VK_HOME
+  else if KeyName = 'DELETE' then Result := VK_DELETE
+  else if KeyName = 'END' then Result := VK_END
+  else if KeyName = 'PAGE-UP' then Result := VK_PRIOR
+  else if KeyName = 'PAGE-DOWN' then Result := VK_NEXT
+
+  else if KeyName = 'UP' then Result := VK_UP
+  else if KeyName = 'DOWN' then Result := VK_DOWN
+  else if KeyName = 'LEFT' then Result := VK_LEFT
+  else if KeyName = 'RIGHT' then Result := VK_RIGHT
+
+  else if KeyName = 'NUM-LOCK' then Result := VK_NUMLOCK
+  else if KeyName = 'NUMPAD0' then Result := VK_NUMPAD0
+  else if KeyName = 'NUMPAD1' then Result := VK_NUMPAD1
+  else if KeyName = 'NUMPAD2' then Result := VK_NUMPAD2
+  else if KeyName = 'NUMPAD3' then Result := VK_NUMPAD3
+  else if KeyName = 'NUMPAD4' then Result := VK_NUMPAD4
+  else if KeyName = 'NUMPAD5' then Result := VK_NUMPAD5
+  else if KeyName = 'NUMPAD6' then Result := VK_NUMPAD6
+  else if KeyName = 'NUMPAD7' then Result := VK_NUMPAD7
+  else if KeyName = 'NUMPAD8' then Result := VK_NUMPAD8
+  else if KeyName = 'NUMPAD9' then Result := VK_NUMPAD9
+
+  else if KeyName = 'NUMPAD-DIVIDE' then Result := VK_DIVIDE
+  else if KeyName = 'NUMPAD-MULTIPLY' then Result := VK_MULTIPLY
+  else if KeyName = 'NUMPAD-MINUS' then Result := VK_SUBTRACT
+  else if KeyName = 'NUMPAD-PLUS' then Result := VK_ADD
+  else if KeyName = 'NUMPAD-DEL' then Result := VK_DECIMAL
+  else if KeyName = 'NUMPAD-ENTER' then Result := VK_RETURN
+
+  else
+    Result := 0; // если не нашли
 end;
 
 procedure TMain.FormCreate(Sender: TObject);
@@ -162,45 +290,62 @@ begin
 
   Ini:=TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Config.ini');
   StartupVolume:=Ini.ReadInteger('Main', 'StartupVolume', 11);
-  AppTitle_0:=Ini.ReadString('Numpad_0', 'Name', '');
-  AppPath_0:=Ini.ReadString('Numpad_0', 'App', '');
-  AppParams_0:=Ini.ReadString('Numpad_0', 'Params', '');
-  AppTitle_1:=Ini.ReadString('Numpad_1', 'Name', '');
-  AppPath_1:=Ini.ReadString('Numpad_1', 'App', '');
-  AppParams_1:=Ini.ReadString('Numpad_1', 'Params', '');
-  AppTitle_2:=Ini.ReadString('Numpad_2', 'Name', '');
-  AppPath_2:=Ini.ReadString('Numpad_2', 'App', '');
-  AppParams_2:=Ini.ReadString('Numpad_2', 'Params', '');
-  AppTitle_3:=Ini.ReadString('Numpad_3', 'Name', '');
-  AppPath_3:=Ini.ReadString('Numpad_3', 'App', '');
-  AppParams_3:=Ini.ReadString('Numpad_3', 'Params', '');
-  AppTitle_4:=Ini.ReadString('Numpad_4', 'Name', '');
-  AppPath_4:=Ini.ReadString('Numpad_4', 'App', '');
-  AppParams_4:=Ini.ReadString('Numpad_4', 'Params', '');
-  AppTitle_5:=Ini.ReadString('Numpad_5', 'Name', '');
-  AppPath_5:=Ini.ReadString('Numpad_5', 'App', '');
-  AppParams_5:=Ini.ReadString('Numpad_5', 'Params', '');
-  AppTitle_6:=Ini.ReadString('Numpad_6', 'Name', '');
-  AppPath_6:=Ini.ReadString('Numpad_6', 'App', '');
-  AppParams_6:=Ini.ReadString('Numpad_6', 'Params', '');
-  AppTitle_7:=Ini.ReadString('Numpad_7', 'Name', '');
-  AppPath_7:=Ini.ReadString('Numpad_7', 'App', '');
-  AppParams_7:=Ini.ReadString('Numpad_7', 'Params', '');
-  AppTitle_8:=Ini.ReadString('Numpad_8', 'Name', '');
-  AppPath_8:=Ini.ReadString('Numpad_8', 'App', '');
-  AppParams_8:=Ini.ReadString('Numpad_8', 'Params', '');
-  AppTitle_9:=Ini.ReadString('Numpad_9', 'Name', '');
-  AppPath_9:=Ini.ReadString('Numpad_9', 'App', '');
-  AppParams_9:=Ini.ReadString('Numpad_9', 'Params', '');
-  AppTitle_10:=Ini.ReadString('Numpad_/', 'Name', '');
-  AppPath_10:=Ini.ReadString('Numpad_/', 'App', '');
-  AppParams_10:=Ini.ReadString('Numpad_/', 'Params', '');
-  AppTitle_11:=Ini.ReadString('Numpad_*', 'Name', '');
-  AppPath_11:=Ini.ReadString('Numpad_*', 'App', '');
-  AppParams_11:=Ini.ReadString('Numpad_*', 'Params', '');
-  AppTitle_12:=Ini.ReadString('Numpad_.', 'Name', '');
-  AppPath_12:=Ini.ReadString('Numpad_.', 'App', '');
-  AppParams_12:=Ini.ReadString('Numpad_.', 'Params', '');
+  AppTitle_0:=Ini.ReadString('Key_0', 'Name', '');
+  AppPath_0:=Ini.ReadString('Key_0', 'App', '');
+  AppParams_0:=Ini.ReadString('Key_0', 'Params', '');
+  AppTitle_1:=Ini.ReadString('Key_1', 'Name', '');
+  AppPath_1:=Ini.ReadString('Key_1', 'App', '');
+  AppParams_1:=Ini.ReadString('Key_1', 'Params', '');
+  AppTitle_2:=Ini.ReadString('Key_2', 'Name', '');
+  AppPath_2:=Ini.ReadString('Key_2', 'App', '');
+  AppParams_2:=Ini.ReadString('Key_2', 'Params', '');
+  AppTitle_3:=Ini.ReadString('Key_3', 'Name', '');
+  AppPath_3:=Ini.ReadString('Key_3', 'App', '');
+  AppParams_3:=Ini.ReadString('Key_3', 'Params', '');
+  AppTitle_4:=Ini.ReadString('Key_4', 'Name', '');
+  AppPath_4:=Ini.ReadString('Key_4', 'App', '');
+  AppParams_4:=Ini.ReadString('Key_4', 'Params', '');
+  AppTitle_5:=Ini.ReadString('Key_5', 'Name', '');
+  AppPath_5:=Ini.ReadString('Key_5', 'App', '');
+  AppParams_5:=Ini.ReadString('Key_5', 'Params', '');
+  AppTitle_6:=Ini.ReadString('Key_6', 'Name', '');
+  AppPath_6:=Ini.ReadString('Key_6', 'App', '');
+  AppParams_6:=Ini.ReadString('Key_6', 'Params', '');
+  AppTitle_7:=Ini.ReadString('Key_7', 'Name', '');
+  AppPath_7:=Ini.ReadString('Key_7', 'App', '');
+  AppParams_7:=Ini.ReadString('Key_7', 'Params', '');
+  AppTitle_8:=Ini.ReadString('Key_8', 'Name', '');
+  AppPath_8:=Ini.ReadString('Key_8', 'App', '');
+  AppParams_8:=Ini.ReadString('Key_8', 'Params', '');
+  AppTitle_9:=Ini.ReadString('Key_9', 'Name', '');
+  AppPath_9:=Ini.ReadString('Key_9', 'App', '');
+  AppParams_9:=Ini.ReadString('Key_9', 'Params', '');
+  AppTitle_10:=Ini.ReadString('Key_10', 'Name', '');
+  AppPath_10:=Ini.ReadString('Key_10', 'App', '');
+  AppParams_10:=Ini.ReadString('Key_10', 'Params', '');
+  AppTitle_11:=Ini.ReadString('Key_11', 'Name', '');
+  AppPath_11:=Ini.ReadString('Key_11', 'App', '');
+  AppParams_11:=Ini.ReadString('Key_11', 'Params', '');
+  AppTitle_12:=Ini.ReadString('Key_12', 'Name', '');
+  AppPath_12:=Ini.ReadString('Key_12', 'App', '');
+  AppParams_12:=Ini.ReadString('Key_12', 'Params', '');
+
+  HotkeyVolUp:=KeyNameToKeyCode(Ini.ReadString('Main', 'VolumeUpHotkey', 'NUMPPAD0'));
+  HotKeyVolDown:=KeyNameToKeyCode(Ini.ReadString('Main', 'VolumeDownHotkey', 'NUMPPAD0'));
+  HotKey0:=KeyNameToKeyCode(Ini.ReadString('Key_0', 'Hotkey', 'NUMPPAD0'));
+  HotKey1:=KeyNameToKeyCode(Ini.ReadString('Key_1', 'Hotkey', 'NUMPPAD1'));
+  HotKey2:=KeyNameToKeyCode(Ini.ReadString('Key_2', 'Hotkey', 'NUMPPAD2'));
+  HotKey3:=KeyNameToKeyCode(Ini.ReadString('Key_3', 'Hotkey', 'NUMPPAD3'));
+  HotKey4:=KeyNameToKeyCode(Ini.ReadString('Key_4', 'Hotkey', 'NUMPPAD4'));
+  HotKey5:=KeyNameToKeyCode(Ini.ReadString('Key_5', 'Hotkey', 'NUMPPAD5'));
+  HotKey6:=KeyNameToKeyCode(Ini.ReadString('Key_6', 'Hotkey', 'NUMPPAD6'));
+  HotKey7:=KeyNameToKeyCode(Ini.ReadString('Key_7', 'Hotkey', 'NUMPPAD7'));
+  HotKey8:=KeyNameToKeyCode(Ini.ReadString('Key_8', 'Hotkey', 'NUMPPAD8'));
+  HotKey9:=KeyNameToKeyCode(Ini.ReadString('Key_9', 'Hotkey', 'NUMPPAD9'));
+  HotKey10:=KeyNameToKeyCode(Ini.ReadString('Key_10', 'Hotkey', 'NUMPAD-DIVIDE'));
+  HotKey11:=KeyNameToKeyCode(Ini.ReadString('Key_11', 'Hotkey', 'NUMPAD-MULTIPLY'));
+  HotKey12:=KeyNameToKeyCode(Ini.ReadString('Key_12', 'Hotkey', 'NUMPAD-DEL'));
+
   Ini.Free;
 
   Application.Title:=Caption;
@@ -215,9 +360,10 @@ begin
   RegisterKeys();
   //Startup volume
   UpdateVolumeLevel();
-  EndPointVolume.SetMasterVolumeLevelScalar(StartupVolume / 100, nil);
+  if StartupVolume <> 0 then
+    EndPointVolume.SetMasterVolumeLevelScalar(StartupVolume / 100, nil);
 
-  Tray(1);
+  Tray(TrayAdd);
   SetWindowLong(Application.Handle, GWL_EXSTYLE, GetWindowLong(Application.Handle, GWL_EXSTYLE) or WS_EX_TOOLWINDOW);
 end;
 
@@ -234,7 +380,7 @@ begin
   if FileExists(Path) then
     ShellExecute(0, 'open', PChar(Path), PChar(Params), nil, SW_SHOWNORMAL)
   else
-    Application.MessageBox(Pchar(IDS_APP_NOT_FOUND), PChar(Caption), MB_ICONWARNING);
+    Application.MessageBox(PChar(IDS_APP_NOT_FOUND), PChar(Caption), MB_ICONWARNING);
   HideTimer.Enabled:=true;
 end;
 
@@ -249,45 +395,40 @@ end;
 
 procedure TMain.WMHotKey(var Msg: TWMHotKey);
 begin
-  case Msg.HotKey of
-    VK_NUMPAD0: ExecuteAndNotify(AppTitle_0, AppPath_0, AppParams_0);
-    VK_NUMPAD1: ExecuteAndNotify(AppTitle_1, AppPath_1, AppParams_1);
-    VK_NUMPAD2: ExecuteAndNotify(AppTitle_2, AppPath_2, AppParams_2);
-    VK_NUMPAD3: ExecuteAndNotify(AppTitle_3, AppPath_3, AppParams_3);
-    VK_NUMPAD4: ExecuteAndNotify(AppTitle_4, AppPath_4, AppParams_4);
-    VK_NUMPAD5: ExecuteAndNotify(AppTitle_5, AppPath_5, AppParams_5);
-    VK_NUMPAD6: ExecuteAndNotify(AppTitle_6, AppPath_6, AppParams_6);
-    VK_NUMPAD7: ExecuteAndNotify(AppTitle_7, AppPath_7, AppParams_7);
-    VK_NUMPAD8: ExecuteAndNotify(AppTitle_8, AppPath_8, AppParams_8);
-    VK_NUMPAD9: ExecuteAndNotify(AppTitle_9, AppPath_9, AppParams_9);
-    VK_DIVIDE: ExecuteAndNotify(AppTitle_10, AppPath_10, AppParams_10);
-    VK_MULTIPLY: ExecuteAndNotify(AppTitle_11, AppPath_11, AppParams_11);
-    VK_DECIMAL: ExecuteAndNotify(AppTitle_12, AppPath_12, AppParams_12);
-    VK_SUBTRACT:
-      begin
-        UpdateVolumeLevel();
-        if VolumeLevel > 1 then begin
-          VolumeLevel:=VolumeLevel - 1;
-          EndPointVolume.SetMasterVolumeLevelScalar(VolumeLevel / 100, nil);
-          Notify(IDS_VOLUME + ': ' + IntToStr(Round(VolumeLevel)));
-        end;
-      end;
-    VK_ADD:
-      begin
-        UpdateVolumeLevel();
-        if VolumeLevel < 99 then begin
-          VolumeLevel:=VolumeLevel + 1;
-          EndPointVolume.SetMasterVolumeLevelScalar(VolumeLevel / 100, nil);
-          Notify(IDS_VOLUME + ': ' + IntToStr(Round(VolumeLevel)));
-        end;
-      end;
+  if Msg.HotKey = HotKey0 then ExecuteAndNotify(AppTitle_0, AppPath_0, AppParams_0)
+  else if Msg.HotKey = Hotkey1 then ExecuteAndNotify(AppTitle_1, AppPath_1, AppParams_1)
+  else if Msg.HotKey = Hotkey2 then ExecuteAndNotify(AppTitle_2, AppPath_2, AppParams_2)
+  else if Msg.HotKey = Hotkey3 then ExecuteAndNotify(AppTitle_3, AppPath_3, AppParams_3)
+  else if Msg.HotKey = Hotkey4 then ExecuteAndNotify(AppTitle_4, AppPath_4, AppParams_4)
+  else if Msg.HotKey = Hotkey5 then ExecuteAndNotify(AppTitle_5, AppPath_5, AppParams_5)
+  else if Msg.HotKey = Hotkey6 then ExecuteAndNotify(AppTitle_6, AppPath_6, AppParams_6)
+  else if Msg.HotKey = Hotkey7 then ExecuteAndNotify(AppTitle_7, AppPath_7, AppParams_7)
+  else if Msg.HotKey = Hotkey8 then ExecuteAndNotify(AppTitle_8, AppPath_8, AppParams_8)
+  else if Msg.HotKey = Hotkey9 then ExecuteAndNotify(AppTitle_9, AppPath_9, AppParams_9)
+  else if Msg.HotKey = Hotkey10 then ExecuteAndNotify(AppTitle_10, AppPath_10, AppParams_10)
+  else if Msg.HotKey = Hotkey11 then ExecuteAndNotify(AppTitle_11, AppPath_11, AppParams_11)
+  else if Msg.HotKey = Hotkey12 then ExecuteAndNotify(AppTitle_12, AppPath_12, AppParams_12)
+  else if Msg.HotKey = HotkeyVolUp then begin
+    UpdateVolumeLevel();
+    if VolumeLevel < 99 then begin
+      VolumeLevel:=VolumeLevel + 1;
+      EndPointVolume.SetMasterVolumeLevelScalar(VolumeLevel / 100, nil);
+      Notify(IDS_VOLUME + ': ' + IntToStr(Round(VolumeLevel)));
+    end;
+  end else if Msg.HotKey = HotKeyVolDown then begin
+    UpdateVolumeLevel();
+    if VolumeLevel > 1 then begin
+      VolumeLevel:=VolumeLevel - 1;
+      EndPointVolume.SetMasterVolumeLevelScalar(VolumeLevel / 100, nil);
+      Notify(IDS_VOLUME + ': ' + IntToStr(Round(VolumeLevel)));
+    end;
   end;
 end;
 
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   UnRegisterKeys();
-  Tray(2);
+  Tray(TrayDelete);
 end;
 
 procedure TMain.CreateParams(var Params: TCreateParams);
@@ -304,7 +445,7 @@ begin
       PostMessage(Handle, WM_LBUTTONUP, MK_LBUTTON, 0);
     end;
     WM_RBUTTONDOWN:
-      PopupMenu.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+      PopupMenuApp.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
   end;
 end;
 
@@ -323,16 +464,16 @@ end;
 procedure TMain.DefaultHandler(var Message);
 begin
   if TMessage(Message).Msg = WM_TASKBARCREATED then
-    Tray(1);
+    Tray(TrayAdd);
   inherited;
 end;
 
 procedure TMain.FormActivate(Sender: TObject);
 begin
-  if RunOnce = false then begin
-    RunOnce:=true;
-    Main.AlphaBlend:=false;
+  if Main.AlphaBlend then begin
     ShowWindow(Handle, SW_HIDE);
+    Main.AlphaBlendValue:=255;
+    Main.AlphaBlend:=false;
   end;
 end;
 
@@ -353,8 +494,8 @@ end;
 
 procedure TMain.AboutBtnClick(Sender: TObject);
 begin
-  Application.MessageBox(PChar(Caption + ' 0.5' + #13#10 +
-  IDS_LAST_UPDATE + ': 10.05.2020' + #13#10 +
+  Application.MessageBox(PChar(Caption + ' 0.5.2' + #13#10 +
+  IDS_LAST_UPDATE + ': 28.10.25' + #13#10 +
   'https://r57zone.github.io' + #13#10 +
   'r57zone@gmail.com'), PChar(AboutBtn.Caption), MB_ICONINFORMATION);
 end;

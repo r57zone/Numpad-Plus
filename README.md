@@ -3,36 +3,36 @@
 ← Choose language | Выберите язык
 
 # Numpad Plus
-Launch apps and change the volume on Numpad keys.
+Hotkeys for launching applications and adjusting volume. Supports up to 12 buttons.
 
 ## Hotkeys
-Numpad keys are used together with the "Alt" button.
+By default, `Numpad` keys are used together with the `ALT` key. The keys can be changed in the configuration file.
 
 
 
-To change the volume, press "Numpad +" or "Numpad -" and "Alt".
+By default, volume is adjusted with `ALT + Numpad Plus` and `ALT + Numpad Minus`.
 
 
 
-Also, if necessary, you can disable hotkeys temporarily via the context menu in the notification area (tray).
+If necessary, hotkeys can be disabled via the context menu in the system tray.
 
-## Setup
-Enter the application names and paths in thу configuration file "Config.ini". You can also specify startup parameters for applications if necessary.
-
-
-
-You can also set the default volume level, parameter `StartupVolume`, that will be applied when the program starts.
+## Configuration
+Enter application names and paths in the `Config.ini` configuration file. You can also specify launch parameters for applications if needed.
 
 
 
-Add a shortcut to app to the operating system startup.
+You can set the system's default volume level using the `StartupVolume` parameter, which will be applied when the program starts.
+
+
+
+For autostart, add a shortcut to `NumPadPlus.exe` to the Windows startup folder: `%AppData%\Microsoft\Windows\Start Menu\Programs\Startup`.
 
 ## Screenshots
 ![](https://user-images.githubusercontent.com/9499881/81509130-987cc280-9319-11ea-90d1-fca3649899d6.PNG)
 ![](https://user-images.githubusercontent.com/9499881/81509116-83079880-9319-11ea-94b6-6deff09a2ba2.PNG)
 
 ## Download
->Version for Windows XP, Vista, 7, 8.1, 10.
+>Version for Windows XP, Vista, 7, 8.1, 10, 11.
 
 **[Download](https://github.com/r57zone/Numpad-Plus/releases)**
 ## Feedback
