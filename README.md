@@ -6,7 +6,7 @@
 Hotkeys for launching applications and adjusting volume. Supports up to 12 buttons.
 
 ## Hotkeys
-By default, `Numpad` keys are used together with the `ALT` key. The keys can be changed in the configuration file.
+By default, `Numpad` keys are used together with the `ALT` key. The keys can be changed in the configuration file. Button names can be found [here](https://github.com/r57zone/Numpad-Plus/blob/master/BINDINGS.md).
 
 
 
